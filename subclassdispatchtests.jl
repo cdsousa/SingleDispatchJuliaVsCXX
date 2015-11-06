@@ -13,6 +13,7 @@ f(a::ConcrType2) = a.x
 
 function main()
     println()
+    gc()
 
     n = 100_000
 
