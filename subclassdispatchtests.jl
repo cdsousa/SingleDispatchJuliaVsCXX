@@ -18,7 +18,7 @@ function main()
     n = 100_000
 
     arrconcr = [ConcrType1(i) for i=1:n]
-    arrabstr = AbstrType[iseven(i) ? ConcrType1(i) : ConcrType2(i) for i=1:n]
+    arrabstr = AbstrType[rand(Bool) ? ConcrType1(i) : ConcrType2(i) for i=1:n]
 
 
     @time for a in arrconcr; f(a); end

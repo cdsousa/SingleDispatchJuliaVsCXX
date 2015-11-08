@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     std::vector<AbstrType*> arrabstr;
     for(int i=0; i<n; i++){
         // alternate object type to inhibit branch prediction (?)
-        if(i%2){
+        if(rand()%2){
             arrabstr.push_back(new ConcrType1(i));
         }else{
             arrabstr.push_back(new ConcrType2(i));
