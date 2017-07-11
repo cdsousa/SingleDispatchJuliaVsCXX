@@ -10,7 +10,7 @@ struct ConcrType2 <: AbstrType
 end
 f(a::ConcrType2) = a.x
 
-const n = 100_000
+const n = 1_000_000
 
 const arrconcr = [ConcrType1(i) for i=1:n]
 const arrabstr = AbstrType[rand(Bool) ? ConcrType1(i) : ConcrType2(i) for i=1:n]
@@ -24,16 +24,19 @@ function main()
     println()
     gc()
 
+    println("concr")
     sum_arrconcr = 0::Int
     @time for i=1:n
         @inbounds sum_arrconcr += f(g_arrconcr(i))
     end
 
+    println("abstr")
     sum_arrabstr = 0::Int
     @time for i=1:n
         @inbounds sum_arrabstr += f(g_arrabstr(i))
     end
 
+    println("manual dispatch")
     # manual dispatch
     sum_arrabstr2 = 0::Int
     @time for i=1:n
@@ -48,6 +51,7 @@ function main()
         end
     end
 
+    println("union")
     sum_arrunion = 0::Int
     @time for i=1:n
         @inbounds sum_arrunion += f(g_arrunion(i))

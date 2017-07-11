@@ -23,7 +23,7 @@ struct ConcrType2: public AbstrType{
 };
 
 int main(int argc, char **argv) {
-    int n = 100'000;
+    int n = 1'000'000;
 
     std::vector<ConcrType1> arrconcr;
     for(int i=0; i<n; i++){
@@ -52,8 +52,8 @@ int main(int argc, char **argv) {
     auto t3 = Clock::now();
 
 
-    std::cout << std::chrono::duration_cast<microseconds>(t1-t0).count() * 1e-6 << " seconds" << std::endl;
-    std::cout << std::chrono::duration_cast<microseconds>(t3-t2).count() * 1e-6 << " seconds" << std::endl;
+    std::cout << "concr\n" << std::chrono::duration_cast<microseconds>(t1-t0).count() * 1e-6 << " seconds" << std::endl;
+    std::cout << "abstr\n" << std::chrono::duration_cast<microseconds>(t3-t2).count() * 1e-6 << " seconds" << std::endl;
 
     if(sumconcr != sumabstr){
         throw std::runtime_error("sumconcr != sumabstr");
