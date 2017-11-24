@@ -60,7 +60,6 @@ int main(int argc, char **argv) {
     if(sumconcr != sumabstr){
         throw std::runtime_error("sumconcr != sumabstr");
     }
-    std::cout << "(sum=" << sumabstr << ")" << std::endl;
 
     for(auto p: arrabstr) { delete p; }
 

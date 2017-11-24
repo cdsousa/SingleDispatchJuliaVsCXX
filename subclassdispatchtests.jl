@@ -1,14 +1,9 @@
+using BenchmarkTools
+
 abstract type AbstrType end
-
-struct ConcrType1 <: AbstrType
-    x::Int
-end
-f(a::ConcrType1) = a.x
-
-struct ConcrType2 <: AbstrType
-    x::Int
-end
-f(a::ConcrType2) = a.x
+struct ConcrType1 <: AbstrType; x::Int; end
+struct ConcrType2 <: AbstrType; x::Int; end
+@noinline f(a) = a.x
 
 const n = 1_000_000
 
@@ -16,51 +11,37 @@ const arrconcr = [ConcrType1(i) for i=1:n]
 const arrabstr = AbstrType[rand(Bool) ? ConcrType1(i) : ConcrType2(i) for i=1:n]
 const arrunion = Union{ConcrType1, ConcrType2}[rand(Bool) ? ConcrType1(i) : ConcrType2(i) for i=1:n]
 
-g_arrconcr(i) = arrconcr[i]
-g_arrabstr(i) = arrabstr[i]
-g_arrunion(i) = arrunion[i]
+println()
 
-function main()
-    println()
-    gc()
-
-    println("concr")
-    sum_arrconcr = 0::Int
-    @time for i=1:n
-        @inbounds sum_arrconcr += f(g_arrconcr(i))
-    end
-
-    println("abstr")
-    sum_arrabstr = 0::Int
-    @time for i=1:n
-        @inbounds sum_arrabstr += f(g_arrabstr(i))
-    end
-
-    println("manual dispatch")
-    # manual dispatch
-    sum_arrabstr2 = 0::Int
-    @time for i=1:n
-        @inbounds a = g_arrabstr(i)
-        T = typeof(a)
-        if T === ConcrType1
-            sum_arrabstr2 += f(a::ConcrType1)
-        elseif T === ConcrType2
-            sum_arrabstr2 += f(a::ConcrType2)
-        else
-            sum_arrabstr2 += f(a)
-        end
-    end
-
-    println("union")
-    sum_arrunion = 0::Int
-    @time for i=1:n
-        @inbounds sum_arrunion += f(g_arrunion(i))
-    end
-
-    @assert sum_arrconcr == sum_arrabstr == sum_arrabstr2 == sum_arrunion
-
-    println("(sum=$sum_arrconcr)")
+println("concr")
+sum_arrconcr = 0::Int
+@btime for i=1:n
+    @inbounds $sum_arrconcr += f($arrconcr[i])
 end
 
-main()
-main()
+println("abstr")
+sum_arrabstr = 0::Int
+@btime for i=1:n
+    @inbounds $sum_arrabstr += f($arrabstr[i])
+end
+
+println("manual dispatch")
+# manual dispatch
+sum_arrabstr2 = 0::Int
+@btime for i=1:n
+    @inbounds a = $arrabstr[i]
+    T = typeof(a)
+    if T === ConcrType1
+        $sum_arrabstr2 += f(a::ConcrType1)
+    elseif T === ConcrType2
+        $sum_arrabstr2 += f(a::ConcrType2)
+    else
+        $sum_arrabstr2 += f(a)
+    end
+end
+
+println("union")
+sum_arrunion = 0::Int
+@btime for i=1:n
+    @inbounds $sum_arrunion += f($arrunion[i])
+end
